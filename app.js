@@ -2,7 +2,7 @@ var tk = require('./tradeking');
 var express = require('express');
 var app = express.createServer();
 
-var sma_size = 100;
+var sma_size = 20;
 var shares = 200;
 var bought_at = 0;
 var sold_at = 0;
@@ -10,6 +10,7 @@ var total_profit = 0;
 
 var sma = [];
 var prices = [];
+var slopes = [];
 
 var current_sma = 0;
 
@@ -33,6 +34,7 @@ app.get('/', function(req, res){
 app.listen(3011);
 
 function marketOpen() {
+		return true;
 	var time = new Date();
 
 	if(time.getHours() >= 5 && time.getHours() < 13) 
@@ -47,7 +49,7 @@ function main() {
 	}
 
 	tk.quotes(['INTC'], function(data) {
-		if (data == null) {
+		if (data.response == null) {
 			return;
 		}
 
@@ -57,6 +59,7 @@ function main() {
 		current_price = parseFloat(quote.lastprice);
 		prices.push(current_price);
 
+		//figure out SMA
 		if(prices.length >= sma_size) {
 			var sum = 0;
 
@@ -70,21 +73,35 @@ function main() {
 			console.log("avg: "+current_sma);
 		}
 
-		//if((current_sma != 0) && (current_price >= current_sma && current_price >= current_sma + 0.02)) {
-		if((current_sma != 0) && (current_price >= current_sma ) && (current_sma > sma[sma.length-2]) && bought_at == 0) {
+		//calculate slope
+		if(sma.length >= 5) {
+			diff = sma[sma.length-1] - sma[sma.length-5];
+			slopes.push(diff / 5);
+		}
+
+		var buy = false;
+
+		if(slopes.length >= 5) {
+			sum = 0;
+
+			for(var i = slopes.length-3; i<slopes.length-1; i++) {
+				console.log('adding slope: '+slopes[i]);
+				sum += slopes[i];	
+			}
+
+			if(sum > 0) {
+				buy = true;
+			}
+		}
+
+		//buy 
+		if(buy && bought_at == 0) {
 			console.log("buying at "+current_price);
 			bought_at = current_price;
-			sold_at = 0;
 		}
-		
-		if((current_price < sma && current_sma < sma[sma.length-2]) && current_price > bought_at) {
-		//if(current_price <= sma && current_price <= sma - 0.02 && current_price > bought_at) {
-		/*
-		if(bought_at != 0 && 
-			((current_price <= sma  || current_price - bought_at >= 0.02 || 
-			(current_sma < sma[sma.length-2] && sma[sma.length-2] < sma[sma.length-3])) && 
-			current_price > bought_at)) {
-		*/
+
+		//sell
+		if(bought_at != 0 && !buy) {
 			var profit = (current_price * shares) - (bought_at * shares);
 			total_profit += profit;
 
@@ -93,17 +110,21 @@ function main() {
 			console.log("total profit: "+total_profit);
 
 			bought_at = 0;
-			sold_at = current_price;
 		}
 
-		if(prices.length >= 200) {
-			prices = prices.slice(prices.length - sma_size, prices.length - 1);
+		//dont cause memory leaks
+		if(prices.length > 300) {
+			prices = prices.slice(300 , prices.length - 1);
 		}
 		
-		if(sma.length >= 200) {
-			sma = sma.slice(sma.length - sma_size, sma.length - 1);
+		if(sma.length > 300) {
+			sma = sma.slice(300, sma.length - 1);
+		}
+		
+		if(slopes.length > 300) {
+			slopes = slopes.slice(300, slopes.length - 1);
 		}
 	});
 }
 
-setInterval(main, 5000);
+setInterval(main, 120 * 1000);
