@@ -25,7 +25,6 @@ app.get('/', function(req, res){
 app.listen(3011);
 
 function marketOpen() {
-		return true;
 	var time = new Date();
 
 	if(time.getHours() >= 5 && time.getHours() < 13) 
