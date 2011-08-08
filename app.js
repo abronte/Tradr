@@ -13,8 +13,9 @@ app.get('/', function(req, res){
 	var html = "";
 
 	for(var i=0; i<4;i++) {
-		profit += portfolio[watch[i]].profit;
-		html += watch[i]+' - bought at: '+portfolio[watch[i]].bought_at+'<br/>';
+		data = portfolio[watch[i]];
+		profit += data.profit;
+		html += watch[i]+' - profit: '+data.profit+' bought at: '+data.bought_at+'<br/>';
 	}
 
 	html += '<br/>profit: '+profit+'<br/>';

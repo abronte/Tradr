@@ -20,7 +20,10 @@ var consumer = new oauth.OAuth(
 function call(uri, callback) {
   consumer.get(configuration.api_url+uri, configuration.access_token, configuration.access_secret,
     function(error, data, response) {
-      //console.log(data);
+			if(error) {
+				console.log(error);
+			}
+
       data = JSON.parse(data);
       callback(data)
     }
