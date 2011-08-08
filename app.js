@@ -92,7 +92,7 @@ function trade(ticker, quote) {
 	//buy 
 	if(buy && data.bought_at == 0) {
 		console.log("buying at "+current_price);
-		bought_at = current_price;
+		data.bought_at = current_price;
 	}
 
 	//sell
