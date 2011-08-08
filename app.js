@@ -1,6 +1,11 @@
 var tk = require('./tradeking');
 var express = require('express');
 var app = express.createServer();
+var os = require('os');
+
+process.stdout.on('drain', function(){
+	os.freemem();
+});
 
 var watch = ['INTC', 'CRZO', 'TIE', 'JOYG', 'XOM'];
 var portfolio = {};
@@ -10,15 +15,18 @@ var shares = 200;
 
 app.get('/', function(req, res){
 	var profit = 0;
-	var html = "";
-
+	var html = "<table>";
+	
 	for(var i=0; i<4;i++) {
 		data = portfolio[watch[i]];
 		profit += data.profit;
-		html += watch[i]+' - profit: '+data.profit+' bought at: '+data.bought_at+'<br/>';
+		html += '<tr><td>'+watch[i]+'</td><td>profit:</td><td>'+data.profit+'</td>'
+		html += '<td>bought at:</td><td>'+data.bought_at+'</td><td>current:</td><td>'+data.current_price+'</td></tr>';
 	}
 
-	html += '<br/>profit: '+profit+'<br/>';
+	html += '</table>'
+
+	html += '<br/><br/>profit: '+profit+'<br/>';
 
 	res.send(html);
 });
@@ -42,14 +50,15 @@ function trade(ticker, quote) {
 												 'bought_at':0,
 												 'sold_at':0,
 												 'profit':0,
-												 'current_sma':0};
+												 'current_sma':0,
+		                     'current_price':0};
 
-		console.log('was nil'); 
 	}
 
 	data = portfolio[ticker];
 
 	current_price = parseFloat(quote.lastprice);
+	data.current_price = current_price;
 	data.prices.push(current_price);
 	
 	console.log(ticker+' price: '+current_price);
@@ -70,8 +79,9 @@ function trade(ticker, quote) {
 
 	//calculate slope
 	if(data.sma.length >= 5) {
-		diff = data.sma[data.sma.length-1] - data.sma[data.sma.length-5];
-		data.slopes.push(diff / 5);
+		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5;
+		//console.log(ticker+" - slope: "+slope);
+		data.slopes.push(slope);
 	}
 
 	var buy = false;
@@ -84,6 +94,8 @@ function trade(ticker, quote) {
 			sum += data.slopes[i];	
 		}
 
+		console.log(ticker+" - buy indicator: "+sum);
+
 		if(sum > 0) {
 			buy = true;
 		}
@@ -91,18 +103,18 @@ function trade(ticker, quote) {
 
 	//buy 
 	if(buy && data.bought_at == 0) {
-		console.log("buying at "+current_price);
+		console.log(ticker+ " - buying at: "+current_price);
 		data.bought_at = current_price;
 	}
 
 	//sell
-	if(data.bought_at != 0 && !buy) {
+	if(data.bought_at != 0 && !buy && data.bought_at > current_price) {
 		var profit = (current_price * shares) - (data.bought_at * shares);
 		data.profit += profit;
 
-		console.log("selling at "+current_price);
-		console.log("profit: "+profit);
-		console.log("total profit: "+data.profit);
+		console.log(ticker+" - selling at: "+current_price);
+		console.log(ticker+" - profit: "+profit);
+		console.log(ticker+" - total profit: "+data.profit);
 
 		data.bought_at = 0;
 	}
@@ -127,7 +139,8 @@ function main() {
 	}
 
 	tk.quotes(watch, function(data) {
-		if (data.response == null) {
+		if (data == null || data.response == null || data.response.quotes == null) {
+			console.log("oops, our api call returned nil");
 			return;
 		}
 

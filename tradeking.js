@@ -24,6 +24,8 @@ function call(uri, callback) {
 				console.log(error);
 			}
 
+			console.log('API: '+data);
+
       data = JSON.parse(data);
       callback(data)
     }
