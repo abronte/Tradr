@@ -108,7 +108,7 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if(data.bought_at != 0 && !buy && data.bought_at > current_price) {
+	if(data.bought_at != 0 && !buy && data.bought_at < current_price) {
 		var profit = (current_price * shares) - (data.bought_at * shares);
 		data.profit += profit;
 
