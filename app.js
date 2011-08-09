@@ -42,6 +42,15 @@ function marketOpen() {
 		return false;
 }
 
+function sellTime() {
+	var time = new Date();
+	
+	if(time.getHours() >= 5 && time.getHours() < 13 && time.getMinutes() >= 30) 
+		return true;
+	else
+		return false;
+}
+
 function trade(ticker, quote) {
 	if(portfolio[ticker] == null) {
 		portfolio[ticker] = {'sma':[], 
@@ -52,7 +61,6 @@ function trade(ticker, quote) {
 												 'profit':0,
 												 'current_sma':0,
 		                     'current_price':0};
-
 	}
 
 	data = portfolio[ticker];
@@ -108,7 +116,8 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if(data.bought_at != 0 && !buy && data.bought_at < current_price) {
+	if((data.bought_at != 0 && !buy && data.bought_at < current_price) ||
+		(data.bought_at != 0 && data.bought_at < current_price && sellTime())) {
 		var profit = (current_price * shares) - (data.bought_at * shares);
 		data.profit += profit;
 
