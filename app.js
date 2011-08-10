@@ -165,7 +165,7 @@ function trade(ticker, quote) {
 
 function main() {
 	if (!marketOpen()) {
-//		return;
+		return;
 	}
 
 	tk.quotes(watch, function(data) {
