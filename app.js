@@ -7,29 +7,46 @@ process.stdout.on('drain', function(){
 	os.freemem();
 });
 
-var watch = ['INTC', 'CRZO', 'TIE', 'JOYG', 'XOM'];
+var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'ASMI', 'VNDA'];
 var portfolio = {};
 
 var sma_size = 20;
 var shares = 200;
 
+app.use(express.bodyParser());
+
 app.get('/', function(req, res){
 	var profit = 0;
-	var html = "<table>";
+	var html = '<html><head>';
 	
-	for(var i=0; i<4;i++) {
+	html += '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>';
+	html += '<script src="/trade.js" type="text/javascript"></script></head><body><table>';
+	
+	for(var i=0; i<watch.length;i++) {
 		data = portfolio[watch[i]];
 		profit += data.profit;
-		html += '<tr><td>'+watch[i]+'</td><td>profit:</td><td>'+data.profit+'</td>'
-		html += '<td>bought at:</td><td>'+data.bought_at+'</td><td>current:</td><td>'+data.current_price+'</td></tr>';
+		html += '<tr id="'+watch[i]+'"><td>'+watch[i]+'</td><td>profit:</td><td>'+data.profit+'</td>'
+		html += '<td>bought at:</td><td>'+data.bought_at+'</td><td>current:</td><td>'+data.current_price+'</td>';
+		html += '<td><button onclick="sell(\''+watch[i]+'\')">Sell</button></td></tr>';
 	}
 
 	html += '</table>'
 
 	html += '<br/><br/>profit: '+profit+'<br/>';
+	html += '</body></html>';
 
 	res.send(html);
 });
+
+app.post('/sell', function(req, res) {
+	var data = portfolio[req.body.ticker];
+
+	if(data.bought_at != 0) {
+		sellStock(data);
+	}
+});
+
+app.get('/*.*', function(req, res){res.sendfile("./static"+req.url);});
 
 app.listen(3011);
 
@@ -51,6 +68,17 @@ function sellTime() {
 		return false;
 }
 
+function sellStock(data) {
+	var profit = (data.current_price * shares) - (data.bought_at * shares);
+	data.profit += profit;
+
+	console.log(ticker+" - selling at: "+data.current_price);
+	console.log(ticker+" - profit: "+profit);
+	console.log(ticker+" - total profit: "+data.profit);
+
+	data.bought_at = 0;
+}
+
 function trade(ticker, quote) {
 	if(portfolio[ticker] == null) {
 		portfolio[ticker] = {'sma':[], 
@@ -64,6 +92,7 @@ function trade(ticker, quote) {
 	}
 
 	data = portfolio[ticker];
+	data.bought_at = 1;
 
 	current_price = parseFloat(quote.lastprice);
 	data.current_price = current_price;
@@ -117,14 +146,7 @@ function trade(ticker, quote) {
 
 	//sell
 	if((data.bought_at !=0 && current_price > data.bought_at) && (!buy || sellTime())) {
-		var profit = (current_price * shares) - (data.bought_at * shares);
-		data.profit += profit;
-
-		console.log(ticker+" - selling at: "+current_price);
-		console.log(ticker+" - profit: "+profit);
-		console.log(ticker+" - total profit: "+data.profit);
-
-		data.bought_at = 0;
+		sellStock(data);
 	}
 
 	//dont cause memory leaks
@@ -143,7 +165,7 @@ function trade(ticker, quote) {
 
 function main() {
 	if (!marketOpen()) {
-		return;
+//		return;
 	}
 
 	tk.quotes(watch, function(data) {
