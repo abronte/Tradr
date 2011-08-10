@@ -45,7 +45,7 @@ function marketOpen() {
 function sellTime() {
 	var time = new Date();
 	
-	if(time.getHours() >= 5 && time.getHours() < 13 && time.getMinutes() >= 30) 
+	if(time.getHours() >= 12 && time.getMinutes() >= 30) 
 		return true;
 	else
 		return false;
@@ -116,8 +116,7 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if((data.bought_at != 0 && !buy && data.bought_at < current_price) ||
-		(data.bought_at != 0 && data.bought_at < current_price && sellTime())) {
+	if((data.bought_at !=0 && current_price > data.bought_at) && (!buy || sellTime())) {
 		var profit = (current_price * shares) - (data.bought_at * shares);
 		data.profit += profit;
 
