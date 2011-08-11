@@ -40,3 +40,12 @@ exports.quotes = function(tickers, callback) {
 		call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
 	}
 };
+
+exports.marketStatus = function(callback) {
+	try {
+		call('/market/clock.json', callback);
+	} catch(e) {
+		console.log("ERROR: "+e.description);
+		call('/market/clock.json', callback);
+	}
+}

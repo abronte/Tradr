@@ -2,6 +2,7 @@ var tk = require('./tradeking');
 var express = require('express');
 var app = express.createServer();
 var os = require('os');
+var Step = require('step');
 
 process.stdout.on('drain', function(){
 	os.freemem();
@@ -12,6 +13,8 @@ var portfolio = {};
 
 var sma_size = 20;
 var shares = 200;
+
+var market_open = false;
 
 app.use(express.bodyParser());
 
@@ -50,10 +53,10 @@ app.get('/*.*', function(req, res){res.sendfile("./static"+req.url);});
 
 app.listen(3011);
 
-function marketOpen() {
+function marketClosed() {
 	var time = new Date();
 
-	if(time.getHours() >= 5 && time.getHours() < 13) 
+	if(time.getHours() >= 13) 
 		return true;
 	else
 		return false;
@@ -162,11 +165,7 @@ function trade(ticker, quote) {
 	}
 }
 
-function main() {
-	if (!marketOpen()) {
-		return;
-	}
-
+function getQuotes() {
 	tk.quotes(watch, function(data) {
 		if (data == null || data.response == null || data.response.quotes == null) {
 			console.log("oops, our api call returned nil");
@@ -179,8 +178,25 @@ function main() {
 			ticker = instrument.instrument.sym;
 			trade(ticker, quote);
 		}
-
 	});
+}
+
+function main() {
+	if(market_open) {
+		getQuotes();
+
+		if(marketClosed())
+			market_open = false;
+	} else {
+		tk.marketStatus(function(data) {
+			var s = data.response.status.current;
+
+			if(s == "open") {
+				market_open = true;
+				getQuotes();
+			}
+		});
+	}
 }
 
 main();
