@@ -33,5 +33,10 @@ function call(uri, callback) {
 }
 
 exports.quotes = function(tickers, callback) {
-  call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
+	try {
+		call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
+	} catch(e) {
+		console.log("ERROR: "+e.description);
+		call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
+	}
 };
