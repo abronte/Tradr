@@ -8,10 +8,11 @@ process.stdout.on('drain', function(){
 });
 
 var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'ASMI', 'VNDA'];
+var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'ASMI': 40, 'VNDA': 100};
 var portfolio = {};
 
 var sma_size = 20;
-var shares = 200;
+//var shares = 200;
 
 var market_open = false;
 
@@ -71,7 +72,7 @@ function sellTime() {
 }
 
 function sellStock(data) {
-	var profit = (data.current_price * shares) - (data.bought_at * shares);
+	var profit = (data.current_price * data.shares) - (data.bought_at * data.shares);
 	data.profit += profit;
 
 	console.log(ticker+" - selling at: "+data.current_price);
@@ -90,7 +91,8 @@ function trade(ticker, quote) {
 												 'sold_at':0,
 												 'profit':0,
 												 'current_sma':0,
-		                     'current_price':0};
+		                     'current_price':0,
+												 'shares':shares[ticker]};
 	}
 
 	data = portfolio[ticker];
