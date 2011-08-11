@@ -200,4 +200,4 @@ function main() {
 }
 
 main();
-setInterval(main, 120 * 1000);
+setInterval(main, 60 * 1000);
