@@ -10,6 +10,7 @@ process.stdout.on('drain', function(){
 var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'ASMI', 'VNDA'];
 var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'ASMI': 40, 'VNDA': 100};
 var portfolio = {};
+var transactions = [];
 
 var sma_size = 20;
 //var shares = 200;
@@ -36,6 +37,13 @@ app.get('/', function(req, res){
 	html += '</table>'
 
 	html += '<br/><br/>profit: '+profit+'<br/>';
+
+	html += '<br/>transactions: <br/>';
+
+	for(var i=0; i<transactions.length-1;i++){
+		html += transactions[i]+'<br/>';
+	}
+
 	html += '</body></html>';
 
 	res.send(html);
@@ -75,6 +83,8 @@ function sellStock(data) {
 	var profit = (data.current_price * data.shares) - (data.bought_at * data.shares);
 	data.profit += profit;
 
+	transactions.push('selling '+data.shares+' of '+data.sym+' at '+data.current_price+' with '+data.profit+' profit');
+
 	console.log(ticker+" - selling at: "+data.current_price);
 	console.log(ticker+" - profit: "+profit);
 	console.log(ticker+" - total profit: "+data.profit);
@@ -92,7 +102,8 @@ function trade(ticker, quote) {
 												 'profit':0,
 												 'current_sma':0,
 		                     'current_price':0,
-												 'shares':shares[ticker]};
+												 'shares':shares[ticker],
+												 'sym':ticker};
 	}
 
 	data = portfolio[ticker];
@@ -144,6 +155,7 @@ function trade(ticker, quote) {
 	//buy 
 	if(buy && data.bought_at == 0 && !sellTime()) {
 		console.log(ticker+ " - buying at: "+current_price);
+		transactions.push('buying '+data.shares+' of '+data.sym+' at '+data.current_price);
 		data.bought_at = current_price;
 	}
 
