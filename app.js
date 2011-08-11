@@ -138,7 +138,7 @@ function trade(ticker, quote) {
 	}
 
 	//buy 
-	if(buy && data.bought_at == 0) {
+	if(buy && data.bought_at == 0 && !sellTime()) {
 		console.log(ticker+ " - buying at: "+current_price);
 		data.bought_at = current_price;
 	}
