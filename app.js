@@ -2,7 +2,6 @@ var tk = require('./tradeking');
 var express = require('express');
 var app = express.createServer();
 var os = require('os');
-var Step = require('step');
 
 process.stdout.on('drain', function(){
 	os.freemem();
