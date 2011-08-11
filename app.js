@@ -92,7 +92,6 @@ function trade(ticker, quote) {
 	}
 
 	data = portfolio[ticker];
-	data.bought_at = 1;
 
 	current_price = parseFloat(quote.lastprice);
 	data.current_price = current_price;
