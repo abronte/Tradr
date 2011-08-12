@@ -7,8 +7,8 @@ process.stdout.on('drain', function(){
 	os.freemem();
 });
 
-var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'ASMI', 'VNDA'];
-var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'ASMI': 40, 'VNDA': 100};
+var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'VNDA', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ'];
+var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'VNDA': 100, 'BAC': 130, 'AMD':160, 'F':90, 'MGM':86.73, 'NVDA':74, 'SD':133, 'HTZ':92};
 var portfolio = {};
 var transactions = [];
 
@@ -43,6 +43,8 @@ app.get('/', function(req, res){
 	for(var i=0; i<transactions.length-1;i++){
 		html += transactions[i]+'<br/>';
 	}
+
+	html += '<br/>Total commision: '+transactions.length*5;
 
 	html += '</body></html>';
 
