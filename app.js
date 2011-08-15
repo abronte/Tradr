@@ -9,7 +9,7 @@ process.stdout.on('drain', function(){
 });
 
 var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'VNDA', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ'];
-var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'VNDA': 100, 'BAC': 130, 'AMD':160, 'F':90, 'MGM':86.73, 'NVDA':74, 'SD':133, 'HTZ':92};
+var shares= {'CRZO': 60, 'JOYG':24, 'DDD': 100, 'PIR': 200, 'ABB': 50, 'VNDA': 200, 'BAC': 260, 'AMD':320, 'F':180, 'MGM':172, 'NVDA':148, 'SD':266, 'HTZ':184};
 var portfolio = {};
 var transactions = [];
 
