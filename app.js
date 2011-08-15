@@ -13,7 +13,7 @@ var shares= {'CRZO': 30, 'JOYG':12, 'DDD': 50, 'PIR': 100, 'ABB': 40, 'VNDA': 10
 var portfolio = {};
 var transactions = [];
 
-var sma_size = 40;
+var sma_size = 20;
 
 var market_open = false;
 
@@ -146,7 +146,7 @@ function trade(ticker, quote) {
 	if(data.slopes.length >= 5) {
 		sum = 0;
 
-		for(var i = data.slopes.length-6; i<data.slopes.length-1; i++) {
+		for(var i = data.slopes.length-5; i<data.slopes.length-1; i++) {
 			//console.log('adding slope: '+data.slopes[i]);
 			sum += data.slopes[i];	
 		}
