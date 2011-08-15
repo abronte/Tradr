@@ -29,7 +29,7 @@ app.get('/', function(req, res){
 	for(var i=0; i<watch.length;i++) {
 		data = portfolio[watch[i]];
 		profit += data.profit;
-		html += '<tr id="'+watch[i]+'"><td>'+watch[i]+'</td><td>profit:</td><td>'+data.profit+'</td>'
+		html += '<tr id="'+watch[i]+'"><td><a href="http://www.google.com/finance?q='+watch[i]+'">'+watch[i]+'</a></td><td>profit:</td><td>'+data.profit+'</td>'
 		html += '<td>bought at:</td><td>'+data.bought_at+'</td><td>current:</td><td>'+data.current_price+'</td>';
 		html += '<td><button onclick="sell(\''+watch[i]+'\')">Sell</button></td></tr>';
 	}
