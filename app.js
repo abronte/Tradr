@@ -124,7 +124,7 @@ function trade(ticker, quote) {
 	if(data.prices.length >= sma_size) {
 		var sum = 0;
 
-		for(var i = data.prices.length - sma_size; i < data.prices.length; i++) {
+		for(var i = data.prices.length - sma_size; i < data.prices.length-1; i++) {
 			sum += data.prices[i];
 		}
 
