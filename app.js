@@ -1,4 +1,5 @@
 var tk = require('./tradeking');
+var db = require('./db');
 var express = require('express');
 var app = express.createServer();
 var os = require('os');
@@ -13,7 +14,6 @@ var portfolio = {};
 var transactions = [];
 
 var sma_size = 40;
-//var shares = 200;
 
 var market_open = false;
 
@@ -86,6 +86,7 @@ function sellStock(data) {
 	data.profit += profit;
 
 	transactions.push('selling '+data.shares+' of '+data.sym+' at '+data.current_price+' with '+data.profit+' profit');
+	db.addTransaction(ticker, "SELL", data.bought_at, data.current_price, data.shares);
 
 	console.log(ticker+" - selling at: "+data.current_price);
 	console.log(ticker+" - profit: "+profit);
@@ -111,6 +112,9 @@ function trade(ticker, quote) {
 	data = portfolio[ticker];
 
 	current_price = parseFloat(quote.lastprice);
+
+	db.addPrice(ticker, current_price);
+
 	data.current_price = current_price;
 	data.prices.push(current_price);
 	
@@ -159,6 +163,7 @@ function trade(ticker, quote) {
 		console.log(ticker+ " - buying at: "+current_price);
 		transactions.push('buying '+data.shares+' of '+data.sym+' at '+data.current_price);
 		data.bought_at = current_price;
+		db.addTransaction(ticker, "BUY", data.bought_at, null, data.shares);
 	}
 
 	//sell
