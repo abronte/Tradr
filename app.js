@@ -1,11 +1,17 @@
+var os = require('os');
 var tk = require('./tradeking');
 var db = require('./db');
+var phone = require('./phone');
 var express = require('express');
 var app = express.createServer();
-var os = require('os');
 
 process.stdout.on('drain', function(){
 	os.freemem();
+});
+
+process.on('uncaughtException', function(err) {
+	console.log("uncaughtException: "+err);
+	phone.sendError(err);
 });
 
 var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'VNDA', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ'];
@@ -16,6 +22,8 @@ var transactions = [];
 var sma_size = 20;
 
 var market_open = false;
+
+var port = 3011;
 
 app.use(express.bodyParser());
 
@@ -61,7 +69,7 @@ app.post('/sell', function(req, res) {
 
 app.get('/*.*', function(req, res){res.sendfile("./static"+req.url);});
 
-app.listen(3011);
+app.listen(port);
 
 function marketClosed() {
 	var time = new Date();
