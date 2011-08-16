@@ -202,22 +202,27 @@ function getQuotes() {
 }
 
 function main() {
-	if(market_open) {
-		getQuotes();
+	var date = new Date();
+	
+	//dont trade mid minute
+	if(date.getSeconds() == 0) {
+		if(market_open) {
+			getQuotes();
 
-		if(marketClosed())
-			market_open = false;
-	} else {
-		tk.marketStatus(function(data) {
-			var s = data.response.status.current;
+			if(marketClosed())
+				market_open = false;
+		} else {
+			tk.marketStatus(function(data) {
+				var s = data.response.status.current;
 
-			if(s == "open") {
-				market_open = true;
-				getQuotes();
-			}
-		});
+				if(s == "open") {
+					market_open = true;
+					getQuotes();
+				}
+			});
+		}
 	}
 }
 
 main();
-setInterval(main, 60 * 1000);
+setInterval(main, 1000);
