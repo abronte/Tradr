@@ -161,9 +161,21 @@ function trade(ticker, quote) {
 
 		console.log(ticker+" - buy indicator: "+sum);
 
+		var i = data.prices.length;
+		var p = data.prices;
+		var s = data.current_sma;
+
+		// if the last two prices are above the current SMA, buy
+		// this should be a strong buy indicator
+		if(p[i] > s && p[i-1] > s && sum > 0) {
+			buy = true;
+		}
+
+		/*
 		if(sum > 0) {
 			buy = true;
 		}
+		*/
 	}
 
 	//buy 
