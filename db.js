@@ -1,4 +1,5 @@
 var request = require('request');
+var phone = require('./phone');
 var url = "http://localhost:3012";
 
 exports.getStocks = function(callback) {
@@ -14,6 +15,7 @@ function post(path, data) {
 		});
 	} catch(e) {
 		console.log("Unable to connect to management");
+		phone.sendError("Unable to connect to management");
 	}
 }
 
