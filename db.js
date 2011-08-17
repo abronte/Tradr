@@ -23,6 +23,6 @@ exports.addTransaction = function(ticker, type, bought, sold, shares) {
 	post('/api/add_transaction', 'ticker='+ticker+'&paid='+bought+'&deal='+type+'&sold='+sold+'&shares='+shares);
 }
 
-exports.addPrice = function(ticker, price) {
-	post('/api/add_price', 'ticker='+ticker+'&price='+price);
+exports.addPrice = function(ticker, price, date) {
+	post('/api/add_price', 'ticker='+ticker+'&price='+price+'&date='+date.toLocaleDateString()+'&time='+date.toLocaleTimeString());
 }

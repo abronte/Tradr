@@ -25,6 +25,8 @@ var market_open = false;
 
 var port = 3011;
 
+var now;
+
 app.use(express.bodyParser());
 
 app.get('/', function(req, res){
@@ -121,7 +123,7 @@ function trade(ticker, quote) {
 
 	current_price = parseFloat(quote.lastprice);
 
-	db.addPrice(ticker, current_price);
+	db.addPrice(ticker, current_price, now);
 
 	data.current_price = current_price;
 	data.prices.push(current_price);
@@ -220,10 +222,10 @@ function getQuotes() {
 }
 
 function main() {
-	var date = new Date();
+	now = new Date();
 	
 	//dont trade mid minute
-	if(date.getSeconds() == 0) {
+	if(now.getSeconds() == 0) {
 		if(market_open) {
 			getQuotes();
 
