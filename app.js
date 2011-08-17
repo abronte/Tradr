@@ -209,6 +209,7 @@ function getQuotes() {
 	tk.quotes(watch, function(data) {
 		if (data == null || data.response == null || data.response.quotes == null) {
 			console.log("oops, our api call returned nil");
+			getQuotes();
 			return;
 		}
 
