@@ -14,8 +14,8 @@ process.on('uncaughtException', function(err) {
 	phone.sendError(err);
 });
 
-var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'VNDA', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ', 'CAR', 'LVS'];
-var shares= {'CRZO': 60, 'JOYG':24, 'DDD': 100, 'PIR': 200, 'ABB': 50, 'VNDA': 200, 'BAC': 260, 'AMD':320, 'F':180, 'MGM':172, 'NVDA':148, 'SD':266, 'HTZ':184, 'CAR': 200, 'LVS':67};
+var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'VNDA', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ', 'CAR', 'LVS', 'TSM'];
+var shares= {'CRZO': 60, 'JOYG':24, 'DDD': 100, 'PIR': 200, 'ABB': 50, 'VNDA': 200, 'BAC': 260, 'AMD':320, 'F':180, 'MGM':172, 'NVDA':148, 'SD':266, 'HTZ':184, 'CAR': 200, 'LVS':67, 'TSM':200};
 var portfolio = {};
 var transactions = [];
 
