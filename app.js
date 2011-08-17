@@ -110,6 +110,7 @@ function trade(ticker, quote) {
 		portfolio[ticker] = {'sma':[], 
 			                   'prices':[], 
 												 'slopes':[],
+												 'slope_sma':[],
 												 'bought_at':0,
 												 'sold_at':0,
 												 'profit':0,
@@ -122,6 +123,7 @@ function trade(ticker, quote) {
 	data = portfolio[ticker];
 
 	current_price = parseFloat(quote.lastprice);
+	var slope_sma = 0;
 
 	db.addPrice(ticker, current_price, now);
 
@@ -145,35 +147,31 @@ function trade(ticker, quote) {
 	}
 
 	//calculate slope
-	if(data.sma.length >= 5) {
-		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5;
+	if(data.sma.length >= 2) {
+		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-2]) / 2;
 		console.log(ticker+" - slope: "+slope);
 		data.slopes.push(slope);
 	}
 
-	var buy = false;
-
+	//calculate slope sma
 	if(data.slopes.length >= 5) {
-		sum = 0;
+		var sum = 0;
 
-		for(var i = data.slopes.length-5; i<data.slopes.length-1; i++) {
-			//console.log('adding slope: '+data.slopes[i]);
-			sum += data.slopes[i];	
+		for(var i = data.slopes.length-5;i<data.slopes.length-1; i++) {
+			sum += data.slopes[i];
 		}
 
-		console.log(ticker+" - buy indicator: "+sum);
+		slope_sma = sum / 5;
+		data.slop_sma.push(slope_sma);
+		console.log(ticker+" - slope sma: "+slope_sma);
+	}
 
-		//var i = data.prices.length;
-		//var p = data.prices;
-		//var s = data.current_sma;
+	var buy = false;
 
-		// if the last two prices are above the current SMA, buy
-		// this should be a strong buy indicator
-		//if(p[i] > s && p[i-1] > s && sum > 0) {
-		//	buy = true;
-		//}
+	if(data.slope_sma.length >= 1) {
+		console.log(ticker+" - buy indicator: "+slope_sma);
 
-		if(sum > 0) {
+		if(slope_sma >= 0.0018) {
 			buy = true;
 		}
 	}
@@ -187,21 +185,21 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if((data.bought_at !=0 && current_price > data.bought_at) && (!buy || sellTime())) {
+	if((data.bought_at !=0 && current_price > data.bought_at) && (slope_sma < 0 || sellTime())) {
 		sellStock(data);
 	}
 
 	//dont cause memory leaks
-	if(data.prices.length > 300) {
-		data.prices = data.prices.slice(300 , data.prices.length - 1);
+	if(data.prices.length > 500) {
+		data.prices = data.prices.slice(500 , data.prices.length - 1);
 	}
 	
-	if(data.sma.length > 300) {
-		data.sma = data.sma.slice(300, data.sma.length - 1);
+	if(data.sma.length > 500) {
+		data.sma = data.sma.slice(500, data.sma.length - 1);
 	}
 	
-	if(data.slopes.length > 300) {
-		data.slopes = data.slopes.slice(300, data.slopes.length - 1);
+	if(data.slopes.length > 500) {
+		data.slopes = data.slopes.slice(500, data.slopes.length - 1);
 	}
 }
 
