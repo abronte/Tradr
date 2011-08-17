@@ -36,7 +36,7 @@ exports.quotes = function(tickers, callback) {
 	try {
 		call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
 	} catch(e) {
-		console.log("ERROR: "+e.description);
+		console.log("ERROR: "+e);
 		call('/market/quotes.json?symbols='+tickers.join(',')+'&delayed=false', callback);
 	}
 };
@@ -45,7 +45,7 @@ exports.marketStatus = function(callback) {
 	try {
 		call('/market/clock.json', callback);
 	} catch(e) {
-		console.log("ERROR: "+e.description);
+		console.log("ERROR: "+e);
 		call('/market/clock.json', callback);
 	}
 }
