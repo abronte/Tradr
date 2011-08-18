@@ -162,7 +162,7 @@ function trade(ticker, quote) {
 		}
 
 		slope_sma = sum / 5;
-		data.slop_sma.push(slope_sma);
+		data.slope_sma.push(slope_sma);
 		console.log(ticker+" - slope sma: "+slope_sma);
 	}
 
