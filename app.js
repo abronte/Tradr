@@ -5,6 +5,8 @@ var phone = require('./phone');
 var express = require('express');
 var app = express.createServer();
 
+console.log("Starting up");
+
 process.stdout.on('drain', function(){
 	os.freemem();
 });
