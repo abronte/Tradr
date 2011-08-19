@@ -47,9 +47,7 @@ app.get('/', function(req, res){
 	}
 
 	html += '</table>'
-
 	html += '<br/><br/>profit: '+profit+'<br/>';
-
 	html += '<br/>transactions: <br/>';
 
 	for(var i=0; i<transactions.length-1;i++){
@@ -57,7 +55,6 @@ app.get('/', function(req, res){
 	}
 
 	html += '<br/>Total commision: '+transactions.length*5;
-
 	html += '</body></html>';
 
 	res.send(html);
@@ -124,10 +121,8 @@ function trade(ticker, quote) {
 
 	data = portfolio[ticker];
 
-	current_price = parseFloat(quote.lastprice);
-	var slope_sma = 0;
-
-	db.addPrice(ticker, current_price, now);
+	var current_price = parseFloat(quote.lastprice);
+	var slope_sma = null;
 
 	data.current_price = current_price;
 	data.prices.push(current_price);
@@ -177,6 +172,8 @@ function trade(ticker, quote) {
 			buy = true;
 		}
 	}
+	
+	db.addPrice(ticker, current_price, now, slope_sma);
 
 	//buy 
 	if(buy && data.bought_at == 0 && !sellTime()) {
