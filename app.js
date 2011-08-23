@@ -116,10 +116,14 @@ function trade(ticker, quote) {
 												 'current_sma':0,
 		                     'current_price':0,
 												 'shares':shares[ticker],
-												 'sym':ticker};
+												 'sym':ticker,
+												 'last_vol':0};
 	}
 
 	data = portfolio[ticker];
+
+	//calc volume since last tick
+	data.last_vol = quote.extendedquote.volume - data.last_vol;
 
 	var current_price = parseFloat(quote.lastprice);
 	var slope_sma = null;
@@ -173,7 +177,7 @@ function trade(ticker, quote) {
 		}
 	}
 	
-	db.addPrice(ticker, current_price, now, slope_sma);
+	db.addPrice(ticker, current_price, now, slope_sma, data.last_vol);
 
 	//buy 
 	if(buy && data.bought_at == 0 && !sellTime()) {
