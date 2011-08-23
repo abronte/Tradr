@@ -19,8 +19,8 @@ function post(path, data) {
 	}
 }
 
-exports.addTransaction = function(ticker, type, bought, sold, shares) {
-	post('/api/add_transaction', 'ticker='+ticker+'&paid='+bought+'&deal='+type+'&sold='+sold+'&shares='+shares);
+exports.addTransaction = function(ticker, type, bought, sold, shares, date) {
+	post('/api/add_transaction', 'ticker='+ticker+'&paid='+bought+'&deal='+type+'&sold='+sold+'&shares='+shares+'&date='+date.toLocaleDateString()+'&time='+date.toLocaleTimeString());
 }
 
 exports.addPrice = function(ticker, price, date, buy) {

@@ -95,7 +95,7 @@ function sellStock(data) {
 	data.profit += profit;
 
 	transactions.push('selling '+data.shares+' of '+data.sym+' at '+data.current_price+' with '+data.profit+' profit');
-	db.addTransaction(ticker, "SELL", data.bought_at, data.current_price, data.shares);
+	db.addTransaction(ticker, "SELL", data.bought_at, data.current_price, data.shares, now);
 
 	console.log(ticker+" - selling at: "+data.current_price);
 	console.log(ticker+" - profit: "+profit);
@@ -180,7 +180,7 @@ function trade(ticker, quote) {
 		console.log(ticker+ " - buying at: "+current_price);
 		transactions.push('buying '+data.shares+' of '+data.sym+' at '+data.current_price);
 		data.bought_at = current_price;
-		db.addTransaction(ticker, "BUY", data.bought_at, null, data.shares);
+		db.addTransaction(ticker, "BUY", data.bought_at, null, data.shares, now);
 	}
 
 	//sell
