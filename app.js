@@ -137,7 +137,7 @@ function trade(ticker, quote) {
 	if(data.prices.length >= sma_size) {
 		var sum = 0;
 
-		for(var i = data.prices.length - sma_size; i < data.prices.length-1; i++) {
+		for(var i = data.prices.length - sma_size; i < data.prices.length; i++) {
 			sum += data.prices[i];
 		}
 
@@ -158,7 +158,7 @@ function trade(ticker, quote) {
 	if(data.slopes.length >= 5) {
 		var sum = 0;
 
-		for(var i = data.slopes.length-5;i<data.slopes.length-1; i++) {
+		for(var i = data.slopes.length-5;i<data.slopes.length; i++) {
 			sum += data.slopes[i];
 		}
 
