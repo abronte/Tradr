@@ -26,3 +26,9 @@ exports.addTransaction = function(ticker, type, bought, sold, shares, date) {
 exports.addPrice = function(ticker, price, date, buy, vol) {
 	post('/api/add_price', 'ticker='+ticker+'&price='+price+'&date='+date.toLocaleDateString()+'&time='+date.toLocaleTimeString()+'&buy='+buy+'&vol='+vol);
 }
+
+exports.getPrices = function(ticker, date, callback) {
+	request.get(url+'/api/prices/'+ticker+'?date='+date, function (error, response, body) {
+		callback(JSON.parse(body));
+	});
+}
