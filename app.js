@@ -123,7 +123,7 @@ function trade(ticker, quote) {
 	data = portfolio[ticker];
 
 	//calc volume since last tick
-	data.last_vol = quote.extendedquote.sessionvolume - data.last_vol;
+	data.last_vol = quote.extendedquote.volume - data.last_vol;
 
 	var current_price = parseFloat(quote.lastprice);
 	var slope_sma = null;
