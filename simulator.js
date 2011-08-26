@@ -54,16 +54,20 @@ function trade(data) {
 			slopes.push(current_slope);
 		}
 
-		if(slopes.length >= 3 && i < 360) {
+		if(slopes.length >= 3 && i < 330) {
 			if(current_slope > slopes[slopes.length-2] && 
-				 current_slope > 0.003 && bought_at == 0) {
+				 slopes[slopes.length-2] > slopes[slopes.length-3] && 
+				 slopes[slopes.length-3] > slopes[slopes.length-4] &&
+				 current_slope >= 0.005 && bought_at == 0) {
 				bought_at = current_price;
 				commission += 4.95;
 				console.log(times[i]+": buying "+current_price);
 			} 
 		}
 
-		if((current_slope < 0.001 || (i >= 360)) && bought_at != 0 && current_price > bought_at) {
+		if(((current_slope < 0.003 && current_slope < slopes[slopes.length-2]) || (i >= 375) )
+			//|| current_price < sma[sma.length-1]) 
+			&& bought_at != 0 && current_price > bought_at) {
 				if(shares != null) {
 					cprofit = current_price * shares - bought_at * shares; 		
 					profit += cprofit;
