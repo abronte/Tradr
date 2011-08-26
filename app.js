@@ -109,7 +109,6 @@ function trade(ticker, quote) {
 		portfolio[ticker] = {'sma':[], 
 			                   'prices':[], 
 												 'slopes':[],
-												 'slope_sma':[],
 												 'bought_at':0,
 												 'sold_at':0,
 												 'profit':0,
@@ -149,7 +148,7 @@ function trade(ticker, quote) {
 
 	//calculate slope
 	if(data.sma.length >= 2) {
-		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-2]) / 2;
+		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5;
 		console.log(ticker+" - slope: "+slope);
 		data.slopes.push(slope);
 	}
