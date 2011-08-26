@@ -126,7 +126,7 @@ function trade(ticker, quote) {
 	data.last_vol = quote.extendedquote.volume - data.last_vol;
 
 	var current_price = parseFloat(quote.lastprice);
-	var slope_sma = null;
+	var slope = 0;
 
 	data.current_price = current_price;
 	data.prices.push(current_price);
@@ -154,30 +154,17 @@ function trade(ticker, quote) {
 		data.slopes.push(slope);
 	}
 
-	//calculate slope sma
-	if(data.slopes.length >= 5) {
-		var sum = 0;
-
-		for(var i = data.slopes.length-5;i<data.slopes.length; i++) {
-			sum += data.slopes[i];
-		}
-
-		slope_sma = sum / 5;
-		data.slope_sma.push(slope_sma);
-		console.log(ticker+" - slope sma: "+slope_sma);
-	}
-
 	var buy = false;
 
-	if(data.slope_sma.length >= 1) {
-		console.log(ticker+" - buy indicator: "+slope_sma);
-
-		if(slope_sma >= 0.0018) {
+	if(data.slopes.length >= 3) {
+		if(slope >= 0.005 && (slope > data.slopes[data.slopes.length-2] && 
+			data.slopes[data.slopes.length-2] > data.slopes[data.slopes.length-3] && 
+			data.slopes[data.slopes.length-3] > data.slopes[data.slopes.length-4])) {
 			buy = true;
 		}
 	}
 	
-	db.addPrice(ticker, current_price, now, slope_sma, data.last_vol);
+	db.addPrice(ticker, current_price, now, data.last_vol);
 
 	//buy 
 	if(buy && data.bought_at == 0 && !sellTime()) {
@@ -188,7 +175,8 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if((data.bought_at !=0 && current_price > data.bought_at) && (slope_sma < 0 || sellTime())) {
+	if((data.bought_at !=0 && current_price > data.bought_at) && (slope < 0.003 || sellTime()) &&
+		slope < data.slopes[data.slopes.length-2]) {
 		sellStock(data);
 	}
 
