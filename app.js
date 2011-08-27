@@ -166,7 +166,7 @@ function trade(ticker, quote) {
 	db.addPrice(ticker, current_price, now, data.last_vol);
 
 	//buy 
-	if(buy && data.bought_at == 0 && !sellTime()) {
+	if(buy && data.bought_at == 0 && data.prices.length < 330) {
 		console.log(ticker+ " - buying at: "+current_price);
 		transactions.push('buying '+data.shares+' of '+data.sym+' at '+data.current_price);
 		data.bought_at = current_price;
