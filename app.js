@@ -98,10 +98,6 @@ function sellStock(data) {
 	transactions.push('selling '+data.shares+' of '+data.sym+' at '+data.current_price+' with '+data.profit+' profit');
 	db.addTransaction(ticker, "SELL", data.bought_at, data.current_price, data.shares, now);
 
-	console.log(ticker+" - selling at: "+data.current_price);
-	console.log(ticker+" - profit: "+profit);
-	console.log(ticker+" - total profit: "+data.profit);
-
 	data.bought_at = 0;
 }
 
@@ -130,8 +126,6 @@ function trade(ticker, quote) {
 
 	data.current_price = current_price;
 	data.prices.push(current_price);
-	
-	console.log(ticker+' price: '+current_price);
 		
 	//figure out SMA
 	if(data.prices.length >= sma_size) {
@@ -143,14 +137,11 @@ function trade(ticker, quote) {
 
 		data.current_sma = sum / sma_size;
 		data.sma.push(data.current_sma);
-
-		console.log(ticker+ " - avg: "+data.current_sma);
 	}
 
 	//calculate slope
 	if(data.sma.length >= 2) {
 		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5;
-		console.log(ticker+" - slope: "+slope);
 		data.slopes.push(slope);
 	}
 
@@ -168,7 +159,6 @@ function trade(ticker, quote) {
 
 	//buy 
 	if(buy && data.bought_at == 0 && data.prices.length < 330) {
-		console.log(ticker+ " - buying at: "+current_price);
 		transactions.push('buying '+data.shares+' of '+data.sym+' at '+data.current_price);
 		data.bought_at = current_price;
 		db.addTransaction(ticker, "BUY", data.bought_at, null, data.shares, now);
