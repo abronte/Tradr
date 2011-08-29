@@ -148,7 +148,7 @@ function trade(ticker, quote) {
 	var buy = false;
 
 	if(data.slopes.length >= 3) {
-		if(slope >= 0.18)
+		if(slope >= 0.18) {
 			buy = true;
 		}
 	}
