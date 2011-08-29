@@ -140,17 +140,15 @@ function trade(ticker, quote) {
 	}
 
 	//calculate slope
-	if(data.sma.length >= 2) {
-		slope = (data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5;
+	if(data.sma.length >= 5) {
+		slope = ((data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5) * 100;
 		data.slopes.push(slope);
 	}
 
 	var buy = false;
 
 	if(data.slopes.length >= 3) {
-		if(slope >= 0.005 && (slope > data.slopes[data.slopes.length-2] && 
-			data.slopes[data.slopes.length-2] > data.slopes[data.slopes.length-3] && 
-			data.slopes[data.slopes.length-3] > data.slopes[data.slopes.length-4])) {
+		if(slope >= 0.18)
 			buy = true;
 		}
 	}
@@ -165,7 +163,7 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if((data.bought_at !=0 && current_price > data.bought_at) && (slope < 0.003 || sellTime()) &&
+	if((data.bought_at !=0 && current_price > data.bought_at) && (slope < 0.03 || sellTime()) &&
 		slope < data.slopes[data.slopes.length-2]) {
 		sellStock(data);
 	}
