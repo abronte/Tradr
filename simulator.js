@@ -21,6 +21,7 @@ function trade(data) {
 	var sma_size = 20;
 	var current_sma = 0;
 	var slope_sma = [];
+	var slope = null;
 	var current_slope_sma;
 	var current_price;
 	var bought_at = 0;
@@ -33,7 +34,11 @@ function trade(data) {
 		prices.push(parseFloat(data[i].price.price));
 		times.push(data[i].price.market_time);
 		current_price = parseFloat(data[i].price.price);
-		
+
+		/*****************************
+		 * EMA
+		*****************************/
+		/*
 		if(prices.length == sma_size) {
 			var sum = 0;
 
@@ -79,14 +84,17 @@ function trade(data) {
 				
 				bought_at = 0;
 		}
+		*/
 
-		/*
+		/*****************************
+		 * SMA
+		*****************************/
 		//figure out SMA
 		if(prices.length >= sma_size) {
 			var sum = 0;
 
-			for(var i = prices.length - sma_size; i < prices.length; i++) {
-				sum += prices[i];
+			for(var j = prices.length - sma_size; j < prices.length; j++) {
+				sum += prices[j];
 			}
 
 			current_sma = sum / sma_size;
@@ -94,41 +102,61 @@ function trade(data) {
 		}
 
 		//calculate slope
-		if(sma.length >= 2) {
-			slope = (sma[sma.length-1] - sma[sma.length-2]) / 2;
+		if(sma.length >= 5) {
+			slope = ((sma[sma.length-1] - sma[sma.length-5]) / 5) * 100;
 			slopes.push(slope);
 		}
 
-		//calculate slope sma
-		if(slopes.length >= 5) {
-			var sum = 0;
+		var buy = false;
+		var sell = false;
 
-			for(var i = slopes.length-5;i<slopes.length; i++) {
-				sum += slopes[i];
+		// Price average crossover (PAC)
+		if(sma.length >= 30) {
+			var below = true;
+			var above = true;
+
+			for(var j=prices.length-30;j<prices.length-1;j++) {
+				if(sma[j] > prices[j]) {
+					below = false;
+				}
 			}
 
-			current_slope_sma = sum / 5;
-			slope_sma.push(current_slope_sma);
-		}
-
-		var buy = false;
-
-		if(slope_sma.length >= 1) {
-			if(current_slope_sma >= 0.01) {
+			if(below && current_price > current_sma) {
 				buy = true;
 			}
+			
+			if(!below && current_price < current_sma) {
+				sell = true;
+			}
+		}
+		
+		if(slope != null && slope > 0.18 && i < 330 && (current_price-current_sma < 0.08)) {
+			//buy = true;
 		}
 
-		if(buy && bought_at == 0) {
+		if (slope < 0) {
+			//sell = true;
+		}
+
+		if(buy && i < 300 && bought_at == 0) {
 				bought_at = current_price;
-				console.log("Buying at: "+current_price);
+				commission += 4.95;
+				console.log(times[i]+": buying "+current_price);
 		}
 
-		if((bought_at !=0 && current_price > bought_at) && current_slope_sma < 0) {
-			console.log("Selling at: "+current_price);
+		if((bought_at !=0 && current_price > bought_at) && (sell || i >= 360)) {
+			if(shares != null) {
+				cprofit = current_price * shares - bought_at * shares; 		
+				profit += cprofit;
+				console.log(times[i]+": selling: "+current_price+ " made "+cprofit);
+				commission += 4.95;
+			
+			} else {
+				console.log(times[i]+": selling: "+current_price);
+			}
+				
 			bought_at = 0;
 		}
-		*/
 	}
 
 	if(shares != null) {
