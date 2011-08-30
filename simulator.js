@@ -110,37 +110,45 @@ function trade(data) {
 		var buy = false;
 		var sell = false;
 
-		// Price average crossover (PAC)
+		// Bronte Price average crossover (BPAC)
 		if(sma.length >= 30) {
 			var below = true;
-			var above = true;
 
-			for(var j=prices.length-30;j<prices.length-1;j++) {
-				if(sma[j] > prices[j]) {
+			for(var j=prices.length-31;j<prices.length-1;j++) {
+				if(sma[j] > prices[j] - 0.02) {
 					below = false;
 				}
 			}
+			
+			var price_above = true;	
+			for(var j=prices.length-2;j<prices.length;j++) {
+				if(prices[j] < sma[j]) {
+					price_above = false;
+				}
+			}
 
-			if(below && current_price > current_sma) {
+			if(below && current_price > current_sma && price_above) {
 				buy = true;
 			}
 			
 			if(!below && current_price < current_sma) {
 				sell = true;
 			}
+
 		}
 		
 		if(slope != null && slope > 0.18 && i < 330 && (current_price-current_sma < 0.08)) {
-			//buy = true;
+			buy = true;
 		}
 
-		if (slope < 0) {
-			//sell = true;
-		}
+		//if (slope < 0) {
+	//		sell = true;
+		//}
 
 		if(buy && i < 300 && bought_at == 0) {
 				bought_at = current_price;
-				commission += 4.95;
+				//commission += 4.95;
+				commission += shares * 0.0035
 				console.log(times[i]+": buying "+current_price);
 		}
 
@@ -149,7 +157,8 @@ function trade(data) {
 				cprofit = current_price * shares - bought_at * shares; 		
 				profit += cprofit;
 				console.log(times[i]+": selling: "+current_price+ " made "+cprofit);
-				commission += 4.95;
+				//commission += 4.95;
+				commission += shares * 0.0035
 			
 			} else {
 				console.log(times[i]+": selling: "+current_price);

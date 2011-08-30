@@ -144,15 +144,35 @@ function trade(ticker, quote) {
 		slope = ((data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5) * 100;
 		data.slopes.push(slope);
 	}
-
-	var buy = false;
-
-	if(data.slopes.length >= 3) {
-		if(slope >= 0.18) {
-			buy = true;
-		}
-	}
 	
+	var buy = false;
+	var sell = false;
+
+	if(data.sma.length >= 30) {
+			var below = true;
+
+			for(var j=data.prices.length-31;j<data.prices.length-1;j++) {
+				if(data.sma[j] > data.prices[j] - 0.02) {
+					below = false;
+				}
+			}
+			
+			var price_above = true;	
+			for(var j=data.prices.length-2;j<data.prices.length;j++) {
+				if(data.prices[j] < data.sma[j]) {
+					price_above = false;
+				}
+			}
+
+			if(below && current_price > current_sma && price_above) {
+				buy = true;
+			}
+			
+			if(!below && current_price < current_sma) {
+				sell = true;
+			}
+	}
+
 	db.addPrice(ticker, current_price, now, data.last_vol);
 
 	//buy 
@@ -163,22 +183,8 @@ function trade(ticker, quote) {
 	}
 
 	//sell
-	if((data.bought_at !=0 && current_price > data.bought_at) && (slope < 0.03 || sellTime()) &&
-		slope < data.slopes[data.slopes.length-2]) {
+	if((data.bought_at !=0 && current_price > data.bought_at) && (sell || sellTime())) {
 		sellStock(data);
-	}
-
-	//dont cause memory leaks
-	if(data.prices.length > 500) {
-		data.prices = data.prices.slice(500 , data.prices.length - 1);
-	}
-	
-	if(data.sma.length > 500) {
-		data.sma = data.sma.slice(500, data.sma.length - 1);
-	}
-	
-	if(data.slopes.length > 500) {
-		data.slopes = data.slopes.slice(500, data.slopes.length - 1);
 	}
 }
 
