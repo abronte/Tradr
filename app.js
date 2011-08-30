@@ -164,11 +164,11 @@ function trade(ticker, quote) {
 				}
 			}
 
-			if(below && current_price > current_sma && price_above) {
+			if(below && current_price > data.current_sma && price_above) {
 				buy = true;
 			}
 			
-			if(!below && current_price < current_sma) {
+			if(!below && current_price < data.current_sma) {
 				sell = true;
 			}
 	}
