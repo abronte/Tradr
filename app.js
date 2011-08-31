@@ -152,7 +152,7 @@ function trade(ticker, quote) {
 			var below = true;
 
 			for(var j=data.prices.length-31;j<data.prices.length-1;j++) {
-				if(data.sma[j] > data.prices[j] - 0.02) {
+				if(data.sma[j] > data.prices[j]) {
 					below = false;
 				}
 			}

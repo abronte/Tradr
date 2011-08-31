@@ -115,7 +115,7 @@ function trade(data) {
 			var below = true;
 
 			for(var j=prices.length-31;j<prices.length-1;j++) {
-				if(sma[j] > prices[j] - 0.02) {
+				if(sma[j] > prices[j]) {
 					below = false;
 				}
 			}
