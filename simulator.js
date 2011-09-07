@@ -55,57 +55,6 @@ function trade(data) {
 			sma.push(current_sma);
 		}
 
-		/*
-		if(sma.length >= 10) {
-			current_slope = (sma[sma.length-1]-sma[sma.length-10])/10;
-			//console.log("("+sma[sma.length-1]+" - "+sma[sma.length-10]+" / 10 = "+current_slope);
-			slopes.push(current_slope);
-		}
-
-		if(slopes.length >= 3 && i < 330) {
-			if(current_slope > slopes[slopes.length-2] && 
-				 slopes[slopes.length-2] > slopes[slopes.length-3] && 
-				 slopes[slopes.length-3] > slopes[slopes.length-4] &&
-				 current_slope >= 0.005 && bought_at == 0) {
-				bought_at = current_price;
-				commission += 4.95;
-				console.log(times[i]+": buying "+current_price);
-			} 
-		}
-
-		if(((current_slope < 0.003 && current_slope < slopes[slopes.length-2]) || (i >= 375) )
-			//|| current_price < sma[sma.length-1]) 
-			&& bought_at != 0 && current_price > bought_at) {
-				if(shares != null) {
-					cprofit = current_price * shares - bought_at * shares; 		
-					profit += cprofit;
-					console.log(times[i]+": selling: "+current_price+ " made "+cprofit);
-					commission += 4.95;
-				} else {
-					console.log(times[i]+": selling: "+current_price);
-				}
-				
-				bought_at = 0;
-		}
-		*/
-
-		/*****************************
-		 * SMA
-		*****************************/
-		//figure out SMA
-		/*
-		if(prices.length >= sma_size) {
-			var sum = 0;
-
-			for(var j = prices.length - sma_size; j < prices.length; j++) {
-				sum += prices[j];
-			}
-
-			current_sma = sum / sma_size;
-			sma.push(current_sma);
-		}
-		*/
-
 		//calculate slope
 		if(sma.length >= 10) {
 			slope = ((sma[sma.length-1] - sma[sma.length-10]) / 10) * 100;
