@@ -122,13 +122,13 @@ function trade(ticker, quote) {
 	data.last_vol = quote.extendedquote.volume - data.last_vol;
 
 	var current_price = parseFloat(quote.lastprice);
-	var slope = 0;
+	var slope = null;
 
 	data.current_price = current_price;
 	data.prices.push(current_price);
 		
 	//figure out SMA
-	if(data.prices.length >= sma_size) {
+	if(data.prices.length == sma_size) {
 		var sum = 0;
 
 		for(var i = data.prices.length - sma_size; i < data.prices.length; i++) {
@@ -137,41 +137,29 @@ function trade(ticker, quote) {
 
 		data.current_sma = sum / sma_size;
 		data.sma.push(data.current_sma);
+	// EMA
+	} else if(sma.length >= 1) { 
+		current_sma = (2/(sma_size+1)) * (current_price - data.current_sma) + data.current_sma;
+		data.sma.push(data.current_sma);
 	}
 
 	//calculate slope
-	if(data.sma.length >= 5) {
-		slope = ((data.sma[data.sma.length-1] - data.sma[data.sma.length-5]) / 5) * 100;
+	if(data.sma.length >= 10) {
+		slope = ((data.sma[data.sma.length-1] - data.sma[data.sma.length-10]) / 10) * 100;
 		data.slopes.push(slope);
 	}
 	
 	var buy = false;
 	var sell = false;
 
-	if(data.sma.length >= 30) {
-			var below = true;
-
-			for(var j=data.prices.length-31;j<data.prices.length-1;j++) {
-				if(data.sma[j] > data.prices[j]) {
-					below = false;
-				}
-			}
-			
-			var price_above = true;	
-			for(var j=data.prices.length-2;j<data.prices.length;j++) {
-				if(data.prices[j] < data.sma[j]) {
-					price_above = false;
-				}
-			}
-
-			if(below && current_price > data.current_sma && price_above) {
-				buy = true;
-			}
-			
-			if(!below && current_price < data.current_sma) {
-				sell = true;
-			}
+	if(slope > 0.18) {
+		buy = true;
 	}
+
+	if(slope < 0) {
+		sell = true;
+	}
+
 
 	db.addPrice(ticker, current_price, now, data.last_vol);
 
