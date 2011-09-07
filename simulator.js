@@ -27,6 +27,9 @@ function trade(data) {
 	var bought_at = 0;
 	var times = [];
 
+	var ema = [];
+	var current_sma = [];
+
 	var profit = 0;
 	var commission = 0;
 
@@ -38,7 +41,6 @@ function trade(data) {
 		/*****************************
 		 * EMA
 		*****************************/
-		/*
 		if(prices.length == sma_size) {
 			var sum = 0;
 
@@ -53,6 +55,7 @@ function trade(data) {
 			sma.push(current_sma);
 		}
 
+		/*
 		if(sma.length >= 10) {
 			current_slope = (sma[sma.length-1]-sma[sma.length-10])/10;
 			//console.log("("+sma[sma.length-1]+" - "+sma[sma.length-10]+" / 10 = "+current_slope);
@@ -90,6 +93,7 @@ function trade(data) {
 		 * SMA
 		*****************************/
 		//figure out SMA
+		/*
 		if(prices.length >= sma_size) {
 			var sum = 0;
 
@@ -100,55 +104,35 @@ function trade(data) {
 			current_sma = sum / sma_size;
 			sma.push(current_sma);
 		}
+		*/
 
 		//calculate slope
-		if(sma.length >= 5) {
-			slope = ((sma[sma.length-1] - sma[sma.length-5]) / 5) * 100;
+		if(sma.length >= 10) {
+			slope = ((sma[sma.length-1] - sma[sma.length-10]) / 10) * 100;
 			slopes.push(slope);
 		}
 
 		var buy = false;
 		var sell = false;
 
-		// Bronte Price average crossover (BPAC)
-		if(sma.length >= 30) {
-			var below = true;
-
-			for(var j=prices.length-31;j<prices.length-1;j++) {
-				if(sma[j] > prices[j]) {
-					below = false;
-				}
-			}
-			
-			var price_above = true;	
-			for(var j=prices.length-2;j<prices.length;j++) {
-				if(prices[j] < sma[j]) {
-					price_above = false;
-				}
-			}
-
-			if(below && current_price > current_sma && price_above) {
-				buy = true;
-			}
-			
-			if(!below && current_price < current_sma) {
-				sell = true;
-			}
-
-		}
-		
-		if(slope != null && slope > 0.18 && i < 330 && (current_price-current_sma < 0.08)) {
+		if(slope != null && slope > 0.18 && i < 330) {
 			buy = true;
 		}
 
-		//if (slope < 0) {
-	//		sell = true;
-		//}
+		var l = slopes.length
+		if(slopes[l-7] > slopes[l-6] && slopes[l-6] > slopes[l-5] && slopes[l-5] > slopes[l-4]
+			 && slopes[l-4] > slopes[l-3] && slopes[l-3] > slopes[l-2] && slopes[l-2] > slopes[l-1]) {
+			//sell = true;
+		}
+
+		if (slope < 0) {
+			sell = true;
+		}
 
 		if(buy && i < 300 && bought_at == 0) {
 				bought_at = current_price;
-				//commission += 4.95;
-				commission += shares * 0.0035
+				commission += 4.95;
+				//commission += shares * 0.0035
 				console.log(times[i]+": buying "+current_price);
 		}
 
@@ -157,8 +141,8 @@ function trade(data) {
 				cprofit = current_price * shares - bought_at * shares; 		
 				profit += cprofit;
 				console.log(times[i]+": selling: "+current_price+ " made "+cprofit);
-				//commission += 4.95;
-				commission += shares * 0.0035
+				commission += 4.95;
+				//commission += shares * 0.0035
 			
 			} else {
 				console.log(times[i]+": selling: "+current_price);
