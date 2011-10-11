@@ -24,10 +24,14 @@ function call(uri, callback) {
 				console.log(error);
 			}
 
-			console.log('API: '+data);
-
-      data = JSON.parse(data);
-      callback(data)
+			try {
+				data = JSON.parse(data);
+				callback(data)
+			} catch(e) {
+				console.log("ERROR PARSING JSON: "+e);
+				console.log("retrying call...");
+				call(uri, callback);
+			}
     }
   ); 
 }

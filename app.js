@@ -137,8 +137,9 @@ function trade(ticker, quote) {
 
 		data.current_sma = sum / sma_size;
 		data.sma.push(data.current_sma);
+
 	// EMA
-	} else if(sma.length >= 1) { 
+	} else if(data.sma.length >= 1) { 
 		current_sma = (2/(sma_size+1)) * (current_price - data.current_sma) + data.current_sma;
 		data.sma.push(data.current_sma);
 	}
