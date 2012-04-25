@@ -11,14 +11,21 @@ process.stdout.on('drain', function(){
 	os.freemem();
 });
 
+/************************************************
+ * Send errors to my phone
+ ************************************************/
 process.on('uncaughtException', function(err) {
 	console.log("uncaughtException: "+err);
 	phone.sendError(err);
 });
 
+/************************************************
+ * Stocks to collect data for and stocks to trade
+ ************************************************/
 var watch = ['CRZO', 'JOYG', 'DDD', 'PIR', 'ABB', 'BAC', 'AMD', 'F', 'MGM', 'NVDA', 'SD', 'HTZ', 'CAR', 'LVS', 'TSM', 'YHOO', 'AA', 'SCHW', 'XRX', 'DEO'];
 var shares= {'CRZO': 60, 'JOYG':24, 'DDD': 100, 'PIR': 200, 'ABB': 50, 'BAC': 260, 'AMD':320, 'F':180, 'MGM':172, 'NVDA':148, 'SD':266, 'HTZ':184, 'CAR': 200, 'LVS':67, 'TSM':200,
 						 'YHOO': 150, 'AA':150, 'SCHW':150, 'XRX': 250, 'DEO':50};
+
 var portfolio = {};
 var transactions = [];
 
@@ -32,6 +39,9 @@ var now;
 
 app.use(express.bodyParser());
 
+/************************************************
+ * Simple Web interface
+ ************************************************/
 app.get('/', function(req, res){
 	var profit = 0;
 	var html = '<html><head>';
@@ -101,6 +111,9 @@ function sellStock(data) {
 	data.bought_at = 0;
 }
 
+/************************************************
+ * Trading logic
+ ************************************************/
 function trade(ticker, quote) {
 	if(portfolio[ticker] == null) {
 		portfolio[ticker] = {'sma':[], 
@@ -193,6 +206,9 @@ function getQuotes() {
 	});
 }
 
+/************************************************
+ * Main loop
+ ************************************************/
 function main() {
 	now = new Date();
 	
