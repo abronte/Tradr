@@ -2,10 +2,10 @@ var oauth = require('oauth');
 
 var configuration = {
   api_url: "https://api.tradeking.com/v1",
-  consumer_key: "YhlanUFeNF9gpp5HAQG0Btvmm1MUpwvnprvLbnC6",
-  consumer_secret: "D05hrAUNhAtOJomi4pjQkeQgwYqatXtmrL4w85Ji",
-  access_token: "vHToJi2kU1fcRb0JsXVjZqggARnoHLwYIydAnh9T",
-  access_secret: "7rtuZ4n1IyLvuSmIV9zFUC8HY7Lk8eYAzRVUdn3x"
+  consumer_key: "",
+  consumer_secret: "",
+  access_token: "",
+  access_secret: ""
 }
 
 var consumer = new oauth.OAuth(

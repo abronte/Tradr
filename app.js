@@ -161,7 +161,6 @@ function trade(ticker, quote) {
 		sell = true;
 	}
 
-
 	db.addPrice(ticker, current_price, now, data.last_vol);
 
 	//buy 
